@@ -1,0 +1,63 @@
+#navbar {
+  flex-direction: column;
+}
+
+#navbar ul {
+  padding: 0.5rem 0 1.25rem 0;
+  margin-right: 0;
+}
+
+.l-heading {
+  font-size: 5rem;
+}
+
+#what .items {
+  margin: 0 0.5rem;
+}
+
+.showcase-content h1 {
+  margin-top: -200px;
+}
+
+#what .items {
+  display: block;
+}
+
+#what .items .item {
+  margin: 0 0 5px 0;
+}
+
+#who div:first-of-type {
+  display: none;
+}
+
+#cli.py-2 {
+  padding: 2rem 0;
+}
+
+.clients img:last-child {
+  display: none;
+}
+
+#contact {
+  display: block;
+}
+.map {
+  height: 300px;
+  width: 100%;
+}
+form {
+  padding: 1rem 0.25rem;
+}
+
+@media screen and (max-height: 540px) {
+  .l-heading {
+    font-size: 3rem;
+  }
+  .showcase-content h1 {
+    margin-top: 0px;
+  }
+  #cli img {
+    padding: 0.25rem;
+  }
+}
