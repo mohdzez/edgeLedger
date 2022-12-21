@@ -1,11 +1,5 @@
-# edgeLedger
+# EdgeLedger
 
-tecnologies used :
- - HTML
- - CSS
- - JavaScript
+A site that encourages the use of flexbox and introduces basic responsiveness. 
 
-Its a website from Brad Traversy's course ,
-Its use to encoursge the use of flex box ,
-its open sourse and can be used as a template ,
-fairly responsive
+This is a website from Brad Travercy's HTML and CSS Course.
