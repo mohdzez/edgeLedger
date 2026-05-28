@@ -7,6 +7,15 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service:
+          - name: "test-app"
+            context: "."
+            dockerfilePath: "Dockerfile"
+            buildStrategy: "auto"
+            imageRepository: "edgeledger-part3/production"
     steps:
       - uses: actions/checkout@v4
 
@@ -21,30 +30,39 @@ jobs:
       - name: Build and push image
         id: build
         env:
-          IMAGE_TAG: ${{ github.sha }}
-          IMAGE_URI: registry.digitalocean.com/liftoff-36620df47c/edgeledger2/production:${{ github.sha }}
-          CONFIGURED_BUILD_STRATEGY: auto
-          CONFIGURED_DOCKERFILE_PATH: Dockerfile
-          CONFIGURED_DOCKER_CONTEXT: .
+          SERVICE_NAME: ${{ matrix.service.name }}
+          IMAGE_URI: registry.digitalocean.com/liftoff-36620df47c/${{ matrix.service.imageRepository }}:${{ github.sha }}
+          CONFIGURED_BUILD_STRATEGY: ${{ matrix.service.buildStrategy }}
+          CONFIGURED_DOCKERFILE_PATH: ${{ matrix.service.dockerfilePath }}
+          CONFIGURED_DOCKER_CONTEXT: ${{ matrix.service.context }}
+
         run: |
           set -euo pipefail
 
           BUILD_STRATEGY=""
           BUILD_PLAN=""
+          DOCKER_BUILD_ARGS=""
+          NIXPACKS_ENV_ARGS=""
 
-          if [ -f "./Dockerfile" ]; then
+          # auto-detect: Dockerfile in context wins, otherwise Nixpacks; explicit overrides honored.
+          if [ "$CONFIGURED_BUILD_STRATEGY" = "dockerfile" ]; then
             BUILD_STRATEGY="dockerfile"
-            docker build -f Dockerfile -t "$IMAGE_URI" .
-          elif [ "$CONFIGURED_BUILD_STRATEGY" = "dockerfile" ]; then
+            docker build $DOCKER_BUILD_ARGS -f "$CONFIGURED_DOCKERFILE_PATH" -t "$IMAGE_URI" "$CONFIGURED_DOCKER_CONTEXT"
+          elif [ "$CONFIGURED_BUILD_STRATEGY" = "nixpacks" ]; then
+            BUILD_STRATEGY="nixpacks"
+            curl -fsSL https://nixpacks.com/install.sh | bash
+            export PATH="$HOME/.local/bin:$PATH"
+            BUILD_PLAN="$(nixpacks plan "$CONFIGURED_DOCKER_CONTEXT" --format json | tr -d '\n')"
+            nixpacks build "$CONFIGURED_DOCKER_CONTEXT" $NIXPACKS_ENV_ARGS --name "$IMAGE_URI"
+          elif [ -f "$CONFIGURED_DOCKER_CONTEXT/Dockerfile" ]; then
             BUILD_STRATEGY="dockerfile"
-            docker build -f "$CONFIGURED_DOCKERFILE_PATH" -t "$IMAGE_URI" "$CONFIGURED_DOCKER_CONTEXT"
+            docker build $DOCKER_BUILD_ARGS -f "$CONFIGURED_DOCKER_CONTEXT/Dockerfile" -t "$IMAGE_URI" "$CONFIGURED_DOCKER_CONTEXT"
           else
             BUILD_STRATEGY="nixpacks"
             curl -fsSL https://nixpacks.com/install.sh | bash
             export PATH="$HOME/.local/bin:$PATH"
-
             BUILD_PLAN="$(nixpacks plan "$CONFIGURED_DOCKER_CONTEXT" --format json | tr -d '\n')"
-            nixpacks build "$CONFIGURED_DOCKER_CONTEXT" --name "$IMAGE_URI"
+            nixpacks build "$CONFIGURED_DOCKER_CONTEXT" $NIXPACKS_ENV_ARGS --name "$IMAGE_URI"
           fi
 
           docker push "$IMAGE_URI"
@@ -60,6 +78,7 @@ jobs:
       - name: Notify Liftoff
         if: always()
         env:
+          SERVICE_NAME: ${{ matrix.service.name }}
           JOB_STATUS: ${{ job.status }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           IMAGE_URI: ${{ steps.build.outputs.image_uri }}
@@ -72,9 +91,9 @@ jobs:
           fi
 
           if [ -n "$BUILD_PLAN_JSON" ]; then
-            PAYLOAD="{\"environmentId\":\"cmpp4mv7i0006f2jpjh14a5lg\",\"imageUri\":\"$IMAGE_URI\",\"commitSha\":\"$GITHUB_SHA\",\"status\":\"$JOB_STATUS\",\"runUrl\":\"$RUN_URL\",\"buildStrategy\":\"$BUILD_STRATEGY\",\"buildPlan\":$BUILD_PLAN_JSON}"
+            PAYLOAD="{\"environmentId\":\"cmppo7yem001zgi4d7v35bs04\",\"serviceName\":\"$SERVICE_NAME\",\"imageUri\":\"$IMAGE_URI\",\"commitSha\":\"$GITHUB_SHA\",\"status\":\"$JOB_STATUS\",\"runUrl\":\"$RUN_URL\",\"buildStrategy\":\"$BUILD_STRATEGY\",\"buildPlan\":$BUILD_PLAN_JSON}"
           else
-            PAYLOAD="{\"environmentId\":\"cmpp4mv7i0006f2jpjh14a5lg\",\"imageUri\":\"$IMAGE_URI\",\"commitSha\":\"$GITHUB_SHA\",\"status\":\"$JOB_STATUS\",\"runUrl\":\"$RUN_URL\",\"buildStrategy\":\"$BUILD_STRATEGY\"}"
+            PAYLOAD="{\"environmentId\":\"cmppo7yem001zgi4d7v35bs04\",\"serviceName\":\"$SERVICE_NAME\",\"imageUri\":\"$IMAGE_URI\",\"commitSha\":\"$GITHUB_SHA\",\"status\":\"$JOB_STATUS\",\"runUrl\":\"$RUN_URL\",\"buildStrategy\":\"$BUILD_STRATEGY\"}"
           fi
 
           curl -X POST https://sighlike-marx-curbless.ngrok-free.dev/api/v1/webhooks/deploy-complete \
