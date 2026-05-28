@@ -22,7 +22,7 @@ jobs:
         id: build
         env:
           IMAGE_TAG: ${{ github.sha }}
-          IMAGE_URI: registry.digitalocean.com/liftoff-36620df47c/edgeledger/production:${{ github.sha }}
+          IMAGE_URI: registry.digitalocean.com/liftoff-36620df47c/edgeledger2/production:${{ github.sha }}
           CONFIGURED_BUILD_STRATEGY: auto
           CONFIGURED_DOCKERFILE_PATH: Dockerfile
           CONFIGURED_DOCKER_CONTEXT: .
@@ -72,12 +72,12 @@ jobs:
           fi
 
           if [ -n "$BUILD_PLAN_JSON" ]; then
-            PAYLOAD="{\"environmentId\":\"cmpp300ht0009cyj7pizqo056\",\"imageUri\":\"$IMAGE_URI\",\"commitSha\":\"$GITHUB_SHA\",\"status\":\"$JOB_STATUS\",\"runUrl\":\"$RUN_URL\",\"buildStrategy\":\"$BUILD_STRATEGY\",\"buildPlan\":$BUILD_PLAN_JSON}"
+            PAYLOAD="{\"environmentId\":\"cmpp4mv7i0006f2jpjh14a5lg\",\"imageUri\":\"$IMAGE_URI\",\"commitSha\":\"$GITHUB_SHA\",\"status\":\"$JOB_STATUS\",\"runUrl\":\"$RUN_URL\",\"buildStrategy\":\"$BUILD_STRATEGY\",\"buildPlan\":$BUILD_PLAN_JSON}"
           else
-            PAYLOAD="{\"environmentId\":\"cmpp300ht0009cyj7pizqo056\",\"imageUri\":\"$IMAGE_URI\",\"commitSha\":\"$GITHUB_SHA\",\"status\":\"$JOB_STATUS\",\"runUrl\":\"$RUN_URL\",\"buildStrategy\":\"$BUILD_STRATEGY\"}"
+            PAYLOAD="{\"environmentId\":\"cmpp4mv7i0006f2jpjh14a5lg\",\"imageUri\":\"$IMAGE_URI\",\"commitSha\":\"$GITHUB_SHA\",\"status\":\"$JOB_STATUS\",\"runUrl\":\"$RUN_URL\",\"buildStrategy\":\"$BUILD_STRATEGY\"}"
           fi
 
-          curl -X POST https://aniya-preservable-harriett.ngrok-free.dev/api/v1/webhooks/deploy-complete \
+          curl -X POST https://sighlike-marx-curbless.ngrok-free.dev/api/v1/webhooks/deploy-complete \
             -H "X-Liftoff-Secret: ${{ secrets.LIFTOFF_DEPLOY_SECRET }}" \
             -H "Content-Type: application/json" \
             -d "$PAYLOAD"
