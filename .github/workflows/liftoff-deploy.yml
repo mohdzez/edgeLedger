@@ -15,12 +15,7 @@ jobs:
             context: "."
             dockerfilePath: "Dockerfile"
             buildStrategy: "auto"
-            imageRepository: "edgeledger2/production/test-app"
-          - name: "api"
-            context: "./"
-            dockerfilePath: "Dockerfile"
-            buildStrategy: "auto"
-            imageRepository: "edgeledger2/production/api"
+            imageRepository: "edgeledger2/production"
     steps:
       - uses: actions/checkout@v4
 
@@ -40,31 +35,34 @@ jobs:
           CONFIGURED_BUILD_STRATEGY: ${{ matrix.service.buildStrategy }}
           CONFIGURED_DOCKERFILE_PATH: ${{ matrix.service.dockerfilePath }}
           CONFIGURED_DOCKER_CONTEXT: ${{ matrix.service.context }}
+
         run: |
           set -euo pipefail
 
           BUILD_STRATEGY=""
           BUILD_PLAN=""
+          DOCKER_BUILD_ARGS=""
+          NIXPACKS_ENV_ARGS=""
 
           # auto-detect: Dockerfile in context wins, otherwise Nixpacks; explicit overrides honored.
           if [ "$CONFIGURED_BUILD_STRATEGY" = "dockerfile" ]; then
             BUILD_STRATEGY="dockerfile"
-            docker build -f "$CONFIGURED_DOCKERFILE_PATH" -t "$IMAGE_URI" "$CONFIGURED_DOCKER_CONTEXT"
+            docker build $DOCKER_BUILD_ARGS -f "$CONFIGURED_DOCKERFILE_PATH" -t "$IMAGE_URI" "$CONFIGURED_DOCKER_CONTEXT"
           elif [ "$CONFIGURED_BUILD_STRATEGY" = "nixpacks" ]; then
             BUILD_STRATEGY="nixpacks"
             curl -fsSL https://nixpacks.com/install.sh | bash
             export PATH="$HOME/.local/bin:$PATH"
             BUILD_PLAN="$(nixpacks plan "$CONFIGURED_DOCKER_CONTEXT" --format json | tr -d '\n')"
-            nixpacks build "$CONFIGURED_DOCKER_CONTEXT" --name "$IMAGE_URI"
+            nixpacks build "$CONFIGURED_DOCKER_CONTEXT" $NIXPACKS_ENV_ARGS --name "$IMAGE_URI"
           elif [ -f "$CONFIGURED_DOCKER_CONTEXT/Dockerfile" ]; then
             BUILD_STRATEGY="dockerfile"
-            docker build -f "$CONFIGURED_DOCKER_CONTEXT/Dockerfile" -t "$IMAGE_URI" "$CONFIGURED_DOCKER_CONTEXT"
+            docker build $DOCKER_BUILD_ARGS -f "$CONFIGURED_DOCKER_CONTEXT/Dockerfile" -t "$IMAGE_URI" "$CONFIGURED_DOCKER_CONTEXT"
           else
             BUILD_STRATEGY="nixpacks"
             curl -fsSL https://nixpacks.com/install.sh | bash
             export PATH="$HOME/.local/bin:$PATH"
             BUILD_PLAN="$(nixpacks plan "$CONFIGURED_DOCKER_CONTEXT" --format json | tr -d '\n')"
-            nixpacks build "$CONFIGURED_DOCKER_CONTEXT" --name "$IMAGE_URI"
+            nixpacks build "$CONFIGURED_DOCKER_CONTEXT" $NIXPACKS_ENV_ARGS --name "$IMAGE_URI"
           fi
 
           docker push "$IMAGE_URI"
