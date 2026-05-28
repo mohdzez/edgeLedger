@@ -15,7 +15,7 @@ jobs:
             context: "."
             dockerfilePath: "Dockerfile"
             buildStrategy: "auto"
-            imageRepository: "edgeledger2/production"
+            imageRepository: "edgeledger-part3/production"
     steps:
       - uses: actions/checkout@v4
 
@@ -91,9 +91,9 @@ jobs:
           fi
 
           if [ -n "$BUILD_PLAN_JSON" ]; then
-            PAYLOAD="{\"environmentId\":\"cmpp4mv7i0006f2jpjh14a5lg\",\"serviceName\":\"$SERVICE_NAME\",\"imageUri\":\"$IMAGE_URI\",\"commitSha\":\"$GITHUB_SHA\",\"status\":\"$JOB_STATUS\",\"runUrl\":\"$RUN_URL\",\"buildStrategy\":\"$BUILD_STRATEGY\",\"buildPlan\":$BUILD_PLAN_JSON}"
+            PAYLOAD="{\"environmentId\":\"cmppo7yem001zgi4d7v35bs04\",\"serviceName\":\"$SERVICE_NAME\",\"imageUri\":\"$IMAGE_URI\",\"commitSha\":\"$GITHUB_SHA\",\"status\":\"$JOB_STATUS\",\"runUrl\":\"$RUN_URL\",\"buildStrategy\":\"$BUILD_STRATEGY\",\"buildPlan\":$BUILD_PLAN_JSON}"
           else
-            PAYLOAD="{\"environmentId\":\"cmpp4mv7i0006f2jpjh14a5lg\",\"serviceName\":\"$SERVICE_NAME\",\"imageUri\":\"$IMAGE_URI\",\"commitSha\":\"$GITHUB_SHA\",\"status\":\"$JOB_STATUS\",\"runUrl\":\"$RUN_URL\",\"buildStrategy\":\"$BUILD_STRATEGY\"}"
+            PAYLOAD="{\"environmentId\":\"cmppo7yem001zgi4d7v35bs04\",\"serviceName\":\"$SERVICE_NAME\",\"imageUri\":\"$IMAGE_URI\",\"commitSha\":\"$GITHUB_SHA\",\"status\":\"$JOB_STATUS\",\"runUrl\":\"$RUN_URL\",\"buildStrategy\":\"$BUILD_STRATEGY\"}"
           fi
 
           curl -X POST https://sighlike-marx-curbless.ngrok-free.dev/api/v1/webhooks/deploy-complete \
