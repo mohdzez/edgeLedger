@@ -2,6 +2,11 @@
   "name": "edgeledger-static",
   "version": "1.0.0",
   "scripts": {
-    "generate-env": "node scripts/generate-env.js"
+    "generate-env": "node scripts/generate-env.js",
+    "start": "serve -s . -l $PORT"
+  }
+  ,
+  "dependencies": {
+    "serve": "^14.2.0"
   }
 }
