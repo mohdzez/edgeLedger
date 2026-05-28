@@ -18,12 +18,7 @@ jobs:
             context: "."
             dockerfilePath: "Dockerfile"
             buildStrategy: "auto"
-            imageRepository: "general22/production/test-app"
-          - name: "frontend"
-            context: "."
-            dockerfilePath: "Dockerfile"
-            buildStrategy: "auto"
-            imageRepository: "general22/production/frontend"
+            imageRepository: "general22/production"
     steps:
       - uses: actions/checkout@v4
 
