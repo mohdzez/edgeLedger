@@ -34,7 +34,7 @@ jobs:
         id: build
         env:
           SERVICE_NAME: ${{ matrix.service.name }}
-          IMAGE_URI: registry.digitalocean.com/liftoff-8b0caad2db/${{ matrix.service.imageRepository }}:${{ github.sha }}
+          IMAGE_URI: registry.digitalocean.com/liftoff-58e7c5dbf2/${{ matrix.service.imageRepository }}:${{ github.sha }}
           CONFIGURED_BUILD_STRATEGY: ${{ matrix.service.buildStrategy }}
           CONFIGURED_DOCKERFILE_PATH: ${{ matrix.service.dockerfilePath }}
           CONFIGURED_DOCKER_CONTEXT: ${{ matrix.service.context }}
