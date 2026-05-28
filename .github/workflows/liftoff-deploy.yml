@@ -18,7 +18,7 @@ jobs:
             context: "."
             dockerfilePath: "Dockerfile"
             buildStrategy: "auto"
-            imageRepository: "generalman/production"
+            imageRepository: "general22/production"
     steps:
       - uses: actions/checkout@v4
 
@@ -94,9 +94,9 @@ jobs:
           fi
 
           if [ -n "$BUILD_PLAN_JSON" ]; then
-            PAYLOAD="{\"environmentId\":\"cmpprmq2t000q121ffv2nxe4z\",\"serviceName\":\"$SERVICE_NAME\",\"imageUri\":\"$IMAGE_URI\",\"commitSha\":\"$GITHUB_SHA\",\"status\":\"$JOB_STATUS\",\"runUrl\":\"$RUN_URL\",\"buildStrategy\":\"$BUILD_STRATEGY\",\"buildPlan\":$BUILD_PLAN_JSON}"
+            PAYLOAD="{\"environmentId\":\"cmpprzbay000c13nnnhrcxa9l\",\"serviceName\":\"$SERVICE_NAME\",\"imageUri\":\"$IMAGE_URI\",\"commitSha\":\"$GITHUB_SHA\",\"status\":\"$JOB_STATUS\",\"runUrl\":\"$RUN_URL\",\"buildStrategy\":\"$BUILD_STRATEGY\",\"buildPlan\":$BUILD_PLAN_JSON}"
           else
-            PAYLOAD="{\"environmentId\":\"cmpprmq2t000q121ffv2nxe4z\",\"serviceName\":\"$SERVICE_NAME\",\"imageUri\":\"$IMAGE_URI\",\"commitSha\":\"$GITHUB_SHA\",\"status\":\"$JOB_STATUS\",\"runUrl\":\"$RUN_URL\",\"buildStrategy\":\"$BUILD_STRATEGY\"}"
+            PAYLOAD="{\"environmentId\":\"cmpprzbay000c13nnnhrcxa9l\",\"serviceName\":\"$SERVICE_NAME\",\"imageUri\":\"$IMAGE_URI\",\"commitSha\":\"$GITHUB_SHA\",\"status\":\"$JOB_STATUS\",\"runUrl\":\"$RUN_URL\",\"buildStrategy\":\"$BUILD_STRATEGY\"}"
           fi
 
           curl -X POST https://sighlike-marx-curbless.ngrok-free.dev/api/v1/webhooks/deploy-complete \
