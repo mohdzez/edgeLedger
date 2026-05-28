@@ -1,0 +1,7 @@
+{
+  "name": "edgeledger-static",
+  "version": "1.0.0",
+  "scripts": {
+    "generate-env": "node scripts/generate-env.js"
+  }
+}

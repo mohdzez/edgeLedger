@@ -14,6 +14,18 @@
       href="./css/mobile.css"
     />
     <title>EdgeLedger</title>
+    <script src="./env.js"></script>
+    <script>
+      (function(){
+        try{
+          if(window.__ENV__ && window.__ENV__.PLAIN_VAR){
+            document.title = document.title + ' - ' + window.__ENV__.PLAIN_VAR;
+          }
+        }catch(e){
+          console.warn('Could not set env title', e);
+        }
+      })();
+    </script>
   </head>
   <body id="home">
     <!-- Nav : NavBar -->
@@ -38,7 +50,7 @@
     <section id="showcase">
       <div class="showcase-img">
         <div class="showcase-content">
-          <h1 class="l-heading">The Sky Is The Limit</h1>
+          <h1 class="l-heading"><span class="env-left" aria-hidden="true"></span> The Sky Is The Limit <span class="env-right" aria-hidden="true"></span></h1>
           <p>Lorem ipsum dolor sit amet consectetur adipisicing</p>
           <a href="#who" class="btn-primary">About Us</a>
         </div>
@@ -195,6 +207,20 @@
     </footer>
 
     <script src="./js/main.js"></script>
+    <script>
+      (function(){
+        try{
+          var v = (window.__ENV__ && window.__ENV__.PLAIN_VAR) ? window.__ENV__.PLAIN_VAR : '';
+          if(!v) return;
+          var left = document.querySelector('.l-heading .env-left');
+          var right = document.querySelector('.l-heading .env-right');
+          if(left) left.textContent = v + ' ';
+          if(right) right.textContent = ' ' + v;
+        }catch(e){
+          console.warn('env to H1 failed', e);
+        }
+      })();
+    </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFr1k7KDD53Dnp1mVEEOkl1HiPQb_eYLc&callback=initMap&libraries=&v=weekly"></script>
   </body>
 </html>
